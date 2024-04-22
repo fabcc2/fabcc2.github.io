@@ -1,87 +1,224 @@
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Intro to MapView - Create a 2D map | Sample | ArcGIS Maps SDK for JavaScript 4.29</title>
-    <style>
-      html,
-      body,
-      #viewDiv {
-        padding: 0;
-        margin: 0;
-        height: 99%;
-        width:100%;
-      }
-    </style>
 
-    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
-    <script src="https://js.arcgis.com/4.29/"></script>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Intro to MapView - Create a 2D map | Sample | ArcGIS Maps SDK for JavaScript 4.29</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 99%;
+      width: 100%;
+    }
 
-    <script>
-      require(["esri/Map", "esri/views/MapView","esri/layers/FeatureLayer","esri/widgets/Legend","esri/widgets/ScaleBar","esri/widgets/Search","esri/widgets/LayerList","esri/widgets/BasemapGallery"],
-       (Map, MapView, FeatureLayer,Legend,ScaleBar,Search,LayerList, BasemapGallery) => {
-             var flayer = new FeatureLayer({
-       url:"https://www.geosceneonline.cn/server/rest/services/Hosted/abc_2/FeatureServer"
+    #header {
+      background: #0a0a0a;
+      color: rgb(236, 225, 225);
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 10px 4px;
+      /* Slightly larger margin for the title */
+      padding: 2px;
+      text-align: center;
+    }
+
+    #viewDiv {
+      height: calc(100% - 50px);
+      width: calc(100% - 200px);
+      position: absolute;
+      left: 200px;
+      /* Width of the basemap gallery */
+      top: 50px;
+      /* Height of the header */
+    }
+
+    #basemapGalleryDiv {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      width: 200px;
+      height: calc(100% - 45px);
+      background: white;
+      overflow-y: auto;
+      /* Enable vertical scrolling */
+      padding: 5px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #toolbarDiv {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      cursor: default;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+    }
+
+    .esri-widget--button.active,
+    .esri-widget--button.active:hover,
+    .esri-widget--button.active:focus {
+      cursor: default;
+      background-color: #999696;
+    }
+
+    .esri-widget--button.active path,
+    .esri-widget--button.active:hover path,
+    .esri-widget--button.active:focus path {
+      fill: #E4E4E4;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.29/"></script>
+
+  <script>
+    require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/widgets/ScaleBar", "esri/widgets/Search", "esri/widgets/LayerList", "esri/widgets/BasemapGallery", "esri/widgets/DistanceMeasurement2D", "esri/widgets/AreaMeasurement3D", "esri/widgets/AreaMeasurement2D"],
+      (Map, MapView, FeatureLayer, Legend, ScaleBar, Search, LayerList, BasemapGallery, DistanceMeasurement2D, AreaMeasurement3D, AreaMeasurement2D) => {
+        var flayer = new FeatureLayer({
+          url: "https://www.geosceneonline.cn/server/rest/services/Hosted/abc_2/FeatureServer"
         });
         var map = new Map({
           basemap: "streets",
           layers: [flayer]
 
         });
-    
+
         var view = new MapView({
           container: "viewDiv",
           map: map,
+          container: "viewDiv",
           zoom: 3.5,
-          center: [265,35] // longitude, latitude
-          });
+          center: [265, 35] // longitude, latitude
+        });
         var legend1 = new Legend({
-        view: view,
-        layerInfos:[{
-          layer:flayer,
-          title:"公共事件"
-        }]
+          view: view,
+          layerInfos: [{
+            layer: flayer,
+            title: "公共事件"
+          }]
+        });
+        const basemapGallery = new BasemapGallery({
+          view: view,
+          container:"galleryContainer",
         });
 
-view.ui.add(legend1, "bottom-right");  
-let scaleBar = new ScaleBar({
-  view: view
-});
-view.ui.add(scaleBar, {
-  position: "bottom-left"
-});
-const searchWidget = new Search({
-  view: view
-});
-view.ui.add(searchWidget, {
-  position: "top-left",
-  index: 2
-});
-const layerlist = new LayerList({
-  view: view
-});
-view.ui.add(layerlist, "top-right")
-const basemapGallery = new BasemapGallery({
+        view.ui.add(legend1, "bottom-right");
+        let scaleBar = new ScaleBar({
           view: view
         });
-
-        // Add the widget to the top-right corner of the view
-        view.ui.add(basemapGallery, {
-          position: "top-right"
+        view.ui.add(scaleBar, {
+          position: "bottom-left"
         });
+        const searchWidget = new Search({
+          view: view
+        });
+        view.ui.add(searchWidget, {
+          position: "top-LEFT",
+          index: 2
+        });
+        const layerlist = new LayerList({
+          view: view
+        });
+        view.ui.add(layerlist, "top-rLEFT")
+        const measurementWidget = new DistanceMeasurement2D({
+          view: view
+        });
+        view.ui.add(measurementWidget, "bottom-left");
+
+
+        let measurementWidget3 = new AreaMeasurement2D({
+          view: view
+        });
+        view.ui.add(measurementWidget3, "bottom-left");
+
+        document.getElementById("distanceButton").addEventListener("click", function () {
+          setActiveWidget(null);
+          if (!this.classList.contains("active")) {
+            setActiveWidget("distance");
+          } else {
+            setActiveButton(null);
+          }
+        });
+
+        // event listener for area measurements
+        document.getElementById("areaButton").addEventListener("click", function () {
+          setActiveWidget(null);
+          if (!this.classList.contains("active")) {
+            setActiveWidget("area");
+          } else {
+            setActiveButton(null);
+          }
+        });
+
+        function setActiveWidget(type) {
+          switch (type) {
+            case "distance":
+              areaMeasurement2D.visible = false;
+              distanceMeasurement2D.visible = true;
+              distanceMeasurement2D.viewModel.start();
+              setActiveButton(document.getElementById("distanceButton"));
+              break;
+            case "area":
+              distanceMeasurement2D.visible = false;
+              areaMeasurement2D.visible = true;
+              areaMeasurement2D.viewModel.start();
+              setActiveButton(document.getElementById("areaButton"));
+              break;
+            case null:
+              areaMeasurement2D.visible = false;
+              distanceMeasurement2D.visible = false;
+              break;
+          }
+        }
+
+        function setActiveButton(selectedButton) {
+          // focus the view to activate keyboard shortcuts for sketching
+          view.focus();
+          let elements = document.getElementsByClassName("active");
+          for (let i = 0; i < elements.length; i++) {
+            elements[i].classList.remove("active");
+          }
+          if (selectedButton) {
+            selectedButton.classList.add("active");
+          }
+        }
+
+
       });
-    </script>
-    <style> #header {
-        height: 50px;
-        background-color: rgb(0, 75, 85);
-        color: rgb(247, 241, 241);
-        text-align: center;
-        line-height: 50px;
-    }</style>
-  </head>
+  </script>
+  <style>
+    #header {
+      height: 50px;
+      background-color: rgb(0, 75, 85);
+      color: rgb(247, 241, 241);
+      text-align: center;
+      line-height: 50px;
+    }
+  </style>
+</head>
 
-  <body>    <div id="header">美国公共事件</div>
+<body>
+  <div id="header">WebGIS 应用 —— 美国公共事件</div>
+  <div id="basemapGalleryDiv">
+    <div class="title">底图库</div> <!-- Title for the basemap gallery -->
+    <div id="galleryContainer"></div> <!-- Container for basemap gallery items -->
+  </div>
+  <div id="viewDiv"></div>
+  <div id="topbar">
+    <button class="action-button esri-icon-measure-area" id="areaButton" type="button" title="Measure area"></button>
+    <button class="action-button esri-icon-measure-line" id="distanceButton" type="button"
+      title="Measure distance between two or more points"></button>
+  </div>
+</body>
 
-    <div id="viewDiv"></div>
-  </body>
 </html>
